@@ -799,7 +799,7 @@
       background: #1e1e1e;
       border: 1px solid #2e2e2e;
       border-radius: 14px;
-      width: 540px;
+      width: 620px;
       max-width: calc(100vw - 32px);
       max-height: calc(100vh - 48px);
       overflow-y: auto;
@@ -809,6 +809,193 @@
       opacity: 0;
       padding: 22px 22px 20px;
     }
+
+    /* Modal scrollbar */
+    .modal-box::-webkit-scrollbar { width: 8px; }
+    .modal-box::-webkit-scrollbar-track { background: transparent; }
+    .modal-box::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+    /* Scenarios picker */
+    .scenarios-picker {
+      border: 1px solid #2e2e2e;
+      border-radius: 8px;
+      background: #1a1a1a;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .scenarios-picker::-webkit-scrollbar { width: 6px; }
+    .scenarios-picker::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+    .scenarios-empty {
+      padding: 18px 14px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .scenarios-empty a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .scenarios-empty a:hover { text-decoration: underline; }
+
+    .scenario-pick-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background 0.08s;
+    }
+
+    .scenario-pick-row:last-child { border-bottom: none; }
+    .scenario-pick-row:hover { background: var(--bg-row-hover); }
+
+    .scenario-pick-check {
+      appearance: none;
+      width: 14px; height: 14px;
+      border: 1px solid var(--border-light);
+      border-radius: 3px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .scenario-pick-check:checked {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+    .scenario-pick-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px; top: 0px;
+      width: 4px; height: 8px;
+      border: solid #fff;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .scenario-pick-meta { flex: 1; min-width: 0; }
+    .scenario-pick-title {
+      font-size: 12.5px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .scenario-pick-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .scenario-picker-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-color);
+      background: #181818;
+    }
+
+    .scenario-picker-count {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+    }
+
+    .text-btn {
+      background: none; border: none;
+      color: var(--accent-blue);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      padding: 2px 4px;
+    }
+    .text-btn:hover { text-decoration: underline; }
+
+    /* Checks builder */
+    .checks-tabs {
+      display: flex;
+      gap: 4px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 10px;
+    }
+
+    .checks-tab {
+      background: none; border: none;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.1s, border-color 0.1s;
+    }
+
+    .checks-tab:hover { color: var(--text-primary); }
+
+    .checks-tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--accent-purple);
+    }
+
+    .checks-pane { display: none; }
+    .checks-pane.active { display: block; }
+
+    .check-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      margin-bottom: 6px;
+      background: #181818;
+    }
+
+    .check-row-check {
+      appearance: none;
+      width: 14px; height: 14px;
+      border: 1px solid var(--border-light);
+      border-radius: 3px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .check-row-check:checked {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+    .check-row-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px; top: 0px;
+      width: 4px; height: 8px;
+      border: solid #fff;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .check-row-name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .check-row-arg {
+      background: var(--bg-input);
+      border: 1px solid #333;
+      border-radius: 5px;
+      padding: 4px 8px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      outline: none;
+      width: 120px;
+    }
+
+    .check-row-arg:focus { border-color: #555; }
 
     .modal-overlay.open .modal-box {
       transform: translateY(0) scale(1);
@@ -1172,6 +1359,73 @@
     </div>
   </main>
 
+  <!-- ═══════════════════════ RUN EVAL MODAL ═══════════════════════ -->
+  <div class="modal-overlay" id="run-modal" onclick="if(event.target===this)closeRunModal()">
+    <div class="modal-box" role="dialog" aria-labelledby="run-title" style="width: 460px;">
+      <div class="modal-head">
+        <h2 class="modal-title" id="run-title">Run eval</h2>
+        <button class="modal-close" onclick="closeRunModal()" aria-label="Close">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <p class="modal-sub" id="run-modal-sub">
+        Compare baseline vs. candidate on <strong id="run-suite-name">Coding Agent Regression Suite</strong>.
+      </p>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label" for="run-baseline">Baseline</label>
+          <select id="run-baseline" class="form-select">
+            <option>agent_…fkGbPW · claude-opus-4-7</option>
+            <option>agent_…hvNkJZ · claude-opus-4-7</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="run-candidate">Candidate</label>
+          <select id="run-candidate" class="form-select">
+            <option>agent_…fkGbPW · claude-opus-4-8</option>
+            <option>Custom prompt revision</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label" for="run-scenarios">Scenarios</label>
+          <select id="run-scenarios" class="form-select">
+            <option>All 18 scenarios</option>
+            <option>First 5</option>
+            <option>Regressions only</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="run-concurrency">Concurrency</label>
+          <select id="run-concurrency" class="form-select">
+            <option>4 parallel</option>
+            <option>1 (serial)</option>
+            <option>8 parallel</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="run-budget">Max run budget</label>
+        <input id="run-budget" class="form-input" type="text" value="$10.00" />
+        <div class="form-hint">Run halts if total spend exceeds this cap. Leave blank for no limit.</div>
+      </div>
+
+      <div class="modal-divider"></div>
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeRunModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="startRun()">Start run</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════════════════ CREATE EVAL SUITE MODAL ═══════════════════════ -->
   <div class="modal-overlay" id="suite-modal" onclick="if(event.target===this)closeSuiteModal()">
     <div class="modal-box" role="dialog" aria-labelledby="suite-title">
@@ -1222,7 +1476,134 @@
       <div class="form-field">
         <label class="form-label">Scenarios</label>
         <div class="form-hint" style="margin-top:0; margin-bottom:8px;">
-          Start empty — add scenarios from real sessions or create them manually after the suite is created.
+          Pick from existing sessions to seed scenarios, or add more later from the Sessions page.
+        </div>
+        <div class="scenarios-picker" id="scenarios-picker">
+          <div class="scenario-pick-row">
+            <input type="checkbox" class="scenario-pick-check" checked />
+            <div class="scenario-pick-meta">
+              <div class="scenario-pick-title">Fix auth bug in middleware</div>
+              <div class="scenario-pick-sub">sesn_01…xr924f · Jun 11</div>
+            </div>
+          </div>
+          <div class="scenario-pick-row">
+            <input type="checkbox" class="scenario-pick-check" checked />
+            <div class="scenario-pick-meta">
+              <div class="scenario-pick-title">Refactor API client to retry on 5xx</div>
+              <div class="scenario-pick-sub">sesn_01…q7cJhj · Jun 11</div>
+            </div>
+          </div>
+          <div class="scenario-pick-row">
+            <input type="checkbox" class="scenario-pick-check" checked />
+            <div class="scenario-pick-meta">
+              <div class="scenario-pick-title">Add OAuth2 callback handler</div>
+              <div class="scenario-pick-sub">sesn_01…oam5S4 · Jun 10</div>
+            </div>
+          </div>
+          <div class="scenario-pick-row">
+            <input type="checkbox" class="scenario-pick-check" />
+            <div class="scenario-pick-meta">
+              <div class="scenario-pick-title">Resolve flaky test in CI pipeline</div>
+              <div class="scenario-pick-sub">sesn_01…rNk32j · Jun 9</div>
+            </div>
+          </div>
+          <div class="scenario-pick-row">
+            <input type="checkbox" class="scenario-pick-check" />
+            <div class="scenario-pick-meta">
+              <div class="scenario-pick-title">Generate OpenAPI spec from routes</div>
+              <div class="scenario-pick-sub">sesn_01…vP82mk · Jun 8</div>
+            </div>
+          </div>
+        </div>
+        <div class="scenario-picker-foot">
+          <span class="scenario-picker-count" id="scenario-count">3 selected</span>
+          <button class="text-btn" onclick="event.preventDefault()">+ Add scenario manually</button>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Checks</label>
+        <div class="form-hint" style="margin-top:0; margin-bottom:10px;">
+          Deterministic checks run against each scenario's final output, tool trace, and runtime.
+        </div>
+        <div class="checks-tabs">
+          <button class="checks-tab active" onclick="switchCheckTab(event, 'output')">Output</button>
+          <button class="checks-tab" onclick="switchCheckTab(event, 'tool')">Tool</button>
+          <button class="checks-tab" onclick="switchCheckTab(event, 'runtime')">Runtime</button>
+        </div>
+
+        <div class="checks-pane active" id="pane-output">
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" checked />
+            <span class="check-row-name">output.contains</span>
+            <input class="check-row-arg" type="text" placeholder='"integration tests pass"' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">output.not_contains</span>
+            <input class="check-row-arg" type="text" placeholder='"TODO"' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">output.regex_match</span>
+            <input class="check-row-arg" type="text" placeholder='^Fixed: .*' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">output.json_schema_valid</span>
+            <input class="check-row-arg" type="text" placeholder='schema id' />
+          </div>
+        </div>
+
+        <div class="checks-pane" id="pane-tool">
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" checked />
+            <span class="check-row-name">must_call_tool</span>
+            <input class="check-row-arg" type="text" placeholder='"edit_file"' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">must_not_call_tool</span>
+            <input class="check-row-arg" type="text" placeholder='"shell"' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" checked />
+            <span class="check-row-name">tool_call_count_lte</span>
+            <input class="check-row-arg" type="text" value="5" />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">tool_args_match_schema</span>
+            <input class="check-row-arg" type="text" placeholder='tool, schema' />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">tool_call_order</span>
+            <input class="check-row-arg" type="text" placeholder='X before Y' />
+          </div>
+        </div>
+
+        <div class="checks-pane" id="pane-runtime">
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" checked />
+            <span class="check-row-name">max_token_cost</span>
+            <input class="check-row-arg" type="text" value="$0.50" />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">max_latency</span>
+            <input class="check-row-arg" type="text" value="60s" />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" />
+            <span class="check-row-name">max_tool_calls</span>
+            <input class="check-row-arg" type="text" value="10" />
+          </div>
+          <div class="check-row">
+            <input type="checkbox" class="check-row-check" checked />
+            <span class="check-row-name">no_tool_error</span>
+            <input class="check-row-arg" type="text" placeholder='—' disabled />
+          </div>
         </div>
       </div>
 
@@ -1303,11 +1684,9 @@
       </svg>
     `;
 
-    const dotsIcon = `
+    const playIcon = `
       <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="8" cy="3.5" r="1.1" fill="currentColor"/>
-        <circle cx="8" cy="8" r="1.1" fill="currentColor"/>
-        <circle cx="8" cy="12.5" r="1.1" fill="currentColor"/>
+        <path d="M5 3.5L12 8L5 12.5V3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
       </svg>
     `;
 
@@ -1353,7 +1732,7 @@
             <td>${regressionCell}</td>
             <td><span class="cost-val">${s.avgCost}</span></td>
             <td><span class="muted-val">${s.updated}</span></td>
-            <td class="row-actions-cell"><button class="row-actions-btn" aria-label="Row actions">${dotsIcon}</button></td>
+            <td class="row-actions-cell"><button class="row-actions-btn" aria-label="Run eval" title="Run eval" onclick="openRunModal(event, '${s.name.replace(/'/g, "\\'")}')">${playIcon}</button></td>
           </tr>
         `;
       }).join('');
@@ -1373,16 +1752,58 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && suiteModal.classList.contains('open')) {
-        closeSuiteModal();
-      }
+      if (e.key !== 'Escape') return;
+      if (suiteModal.classList.contains('open')) closeSuiteModal();
+      if (runModal.classList.contains('open')) closeRunModal();
     });
 
-    // Row click doesn't navigate when clicking checkbox or row-actions
+    // Row click → results page (skip when clicking the row checkbox or run button)
     document.querySelectorAll('#suites-tbody tr').forEach(row => {
       row.addEventListener('click', (e) => {
         if (e.target.closest('.row-checkbox') || e.target.closest('.row-actions-btn')) return;
-        // would navigate to suite detail in real app
+        window.location.href = 'managed-agent-evals-results.html';
+      });
+    });
+
+    // ─── Run modal ───
+    const runModal = document.getElementById('run-modal');
+    function openRunModal(e, suiteName) {
+      e.stopPropagation();
+      document.getElementById('run-suite-name').textContent = suiteName;
+      runModal.classList.add('open');
+    }
+    function closeRunModal() { runModal.classList.remove('open'); }
+    function startRun() {
+      closeRunModal();
+      // demo: jump to the results page as if the run completed
+      window.location.href = 'managed-agent-evals-results.html';
+    }
+
+    // ─── Checks tab switching ───
+    function switchCheckTab(e, key) {
+      document.querySelectorAll('.checks-tab').forEach(t => t.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      document.querySelectorAll('.checks-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById(`pane-${key}`).classList.add('active');
+    }
+
+    // ─── Scenario picker count ───
+    function updateScenarioCount() {
+      const checked = document.querySelectorAll('#scenarios-picker .scenario-pick-check:checked').length;
+      document.getElementById('scenario-count').textContent = `${checked} selected`;
+    }
+
+    document.querySelectorAll('#scenarios-picker .scenario-pick-check').forEach(c => {
+      c.addEventListener('change', updateScenarioCount);
+    });
+
+    // Clicking the picker row toggles its checkbox
+    document.querySelectorAll('#scenarios-picker .scenario-pick-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.tagName === 'INPUT') return;
+        const cb = row.querySelector('.scenario-pick-check');
+        cb.checked = !cb.checked;
+        updateScenarioCount();
       });
     });
   </script>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trace diff · Coding Agent Regression Suite · Claude Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Serif+4:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-main: #1a1a1a;
+      --bg-sidebar: #111111;
+      --bg-sidebar-hover: #1e1e1e;
+      --bg-sidebar-active: #252525;
+      --bg-content: #1a1a1a;
+      --bg-card: #1a1a1a;
+      --bg-input: #242424;
+      --bg-row-hover: #1f1f1f;
+      --border-color: #2a2a2a;
+      --border-light: #333333;
+      --border-card: #2e2e2e;
+      --text-primary: #ececec;
+      --text-secondary: #8a8a8a;
+      --text-muted: #5a5a5a;
+      --text-sidebar: #a8a8a8;
+      --text-sidebar-active: #ececec;
+      --accent-orange: #d4793a;
+      --accent-purple: #8b7cdb;
+      --accent-blue: #5ba3e8;
+      --accent-green: #6ba968;
+      --accent-red: #d76b6b;
+      --new-badge-bg: #1e3a5c;
+      --new-badge-text: #5ba3e8;
+      --active-badge-bg: #173b1a;
+      --active-badge-text: #6ba968;
+      --regression-bg: #3a1818;
+      --regression-text: #e88a8a;
+      --improvement-bg: #173b1a;
+      --improvement-text: #6ba968;
+      --neutral-badge-bg: #232323;
+      --neutral-badge-text: #a8a8a8;
+      --diff-add: rgba(107, 169, 104, 0.12);
+      --diff-add-border: rgba(107, 169, 104, 0.35);
+      --diff-rm: rgba(215, 107, 107, 0.12);
+      --diff-rm-border: rgba(215, 107, 107, 0.35);
+      --sidebar-width: 232px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      display: flex; height: 100vh; overflow: hidden;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── SIDEBAR (shared) ─── */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex; flex-direction: column;
+      flex-shrink: 0; height: 100vh; overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+
+    .sidebar-brand { display: flex; align-items: center; padding: 16px 16px 14px; }
+    .brand-name {
+      font-family: 'Source Serif 4', 'Inter', serif;
+      font-size: 17px; font-weight: 500;
+      color: var(--text-primary); letter-spacing: -0.005em;
+    }
+    .brand-toggle {
+      margin-left: auto; color: var(--text-muted);
+      background: none; border: none; cursor: pointer;
+      padding: 4px; display: flex; align-items: center; justify-content: center;
+      border-radius: 4px; transition: background 0.1s, color 0.1s;
+    }
+    .brand-toggle:hover { background: var(--bg-sidebar-hover); color: var(--text-secondary); }
+    .brand-toggle svg { width: 16px; height: 16px; }
+
+    .workspace-selector {
+      display: flex; align-items: center; gap: 9px;
+      margin: 0 10px 10px; padding: 8px 10px;
+      border: 1px solid var(--border-color); border-radius: 6px;
+      cursor: pointer; color: var(--text-sidebar); background: transparent;
+      transition: background 0.1s;
+    }
+    .workspace-selector:hover { background: var(--bg-sidebar-hover); }
+    .workspace-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--accent-purple); }
+    .workspace-label { font-size: 13px; color: var(--text-primary); flex: 1; font-weight: 400; }
+    .workspace-chevron { font-size: 10px; color: var(--text-muted); }
+
+    .nav-section { padding: 2px 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; cursor: pointer;
+      color: var(--text-sidebar);
+      font-size: 13px; font-weight: 400;
+      border-radius: 6px; text-decoration: none; position: relative;
+      transition: background 0.1s, color 0.1s;
+    }
+    .nav-item:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
+    .nav-item.active { color: var(--text-sidebar-active); background: var(--bg-sidebar-active); font-weight: 500; }
+    .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.85; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-item .chevron { margin-left: auto; font-size: 9px; color: var(--text-muted); }
+
+    .nav-badge {
+      background: var(--new-badge-bg); color: var(--new-badge-text);
+      font-size: 9.5px; font-weight: 600;
+      padding: 1px 6px; border-radius: 3px;
+      letter-spacing: 0.03em; margin-left: 6px;
+    }
+
+    .nav-sub-item {
+      display: flex; align-items: center;
+      padding: 6px 10px 6px 34px; cursor: pointer;
+      color: var(--text-sidebar); font-size: 12.5px;
+      text-decoration: none; border-radius: 6px;
+      transition: background 0.1s, color 0.1s;
+    }
+    .nav-sub-item:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
+    .nav-sub-item.active { background: var(--bg-sidebar-active); color: var(--text-sidebar-active); font-weight: 500; }
+
+    .sidebar-footer { margin-top: auto; padding: 6px 8px 8px; }
+    .credits-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; color: var(--text-sidebar);
+      font-size: 13px; border-radius: 6px; cursor: pointer;
+      transition: background 0.1s;
+    }
+    .credits-row:hover { background: var(--bg-sidebar-hover); }
+    .credits-row svg { width: 15px; height: 15px; opacity: 0.85; }
+    .credits-amount { margin-left: auto; color: var(--text-secondary); font-size: 12.5px; }
+
+    .user-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; cursor: pointer;
+      border-radius: 6px; margin-top: 4px;
+      transition: background 0.1s;
+    }
+    .user-row:hover { background: var(--bg-sidebar-hover); }
+    .user-avatar {
+      width: 26px; height: 26px; border-radius: 5px;
+      background: linear-gradient(135deg, #c89534, #8b6914);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0;
+    }
+    .user-info { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+    .user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+    .user-meta {
+      font-size: 11px; color: var(--text-muted);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .user-chevron { font-size: 10px; color: var(--text-muted); }
+
+    /* ─── MAIN ─── */
+    .main {
+      flex: 1; display: flex; flex-direction: column;
+      overflow-y: auto; background: var(--bg-content);
+    }
+    .main::-webkit-scrollbar { width: 8px; }
+    .main::-webkit-scrollbar-track { background: transparent; }
+    .main::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+
+    .content-wrap {
+      width: 100%;
+      padding: 28px 40px 24px;
+      flex: 1; display: flex; flex-direction: column;
+    }
+
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12.5px; color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .breadcrumb a { color: var(--text-secondary); text-decoration: none; transition: color 0.1s; }
+    .breadcrumb a:hover { color: var(--text-primary); }
+    .breadcrumb-sep { color: var(--text-muted); }
+    .breadcrumb-current { color: var(--text-primary); }
+
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 22px; gap: 16px;
+    }
+
+    .page-title {
+      font-family: 'Source Serif 4', 'Inter', serif;
+      font-size: 24px; font-weight: 500;
+      color: var(--text-primary); letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .scenario-meta-row {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 12.5px; color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .scenario-meta-row .meta-dot {
+      width: 3px; height: 3px; border-radius: 50%; background: var(--text-muted);
+    }
+    .verdict-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11.5px; padding: 3px 9px;
+      border-radius: 4px; font-weight: 500;
+    }
+    .verdict-badge::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .verdict-badge.regression { color: var(--regression-text); background: var(--regression-bg); }
+    .verdict-badge.regression::before { background: var(--accent-red); }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      padding: 8px 14px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border-card);
+      background: transparent; color: var(--text-primary);
+      transition: background 0.1s, border-color 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--bg-sidebar-hover); border-color: var(--border-light); }
+    .btn svg { width: 14px; height: 14px; }
+    .btn-primary { background: #f5f5f5; color: #111; border-color: #f5f5f5; }
+    .btn-primary:hover { background: #fff; border-color: #fff; }
+
+    /* ─── DIFF GRID ─── */
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .diff-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .diff-col-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      background: #1c1c1c;
+    }
+
+    .diff-col-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .diff-col-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    .diff-col-body { padding: 14px 16px; }
+
+    /* Scenario input (full width) */
+    .input-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .input-card-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .input-card-body {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    /* ─── METRICS ROW (cost / latency / tokens) ─── */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 0;
+    }
+
+    .metric-tile {
+      padding: 10px 0;
+    }
+
+    .metric-tile + .metric-tile {
+      border-left: 1px solid var(--border-color);
+      padding-left: 14px;
+    }
+
+    .metric-tile-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-tile-val {
+      font-size: 16px;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-tile-delta {
+      font-size: 11px;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-tile-delta.pos { color: var(--accent-red); }  /* cost/latency up = bad */
+    .metric-tile-delta.neg { color: var(--accent-green); }
+    .metric-tile-delta.neutral { color: var(--text-muted); }
+
+    /* ─── SECTION HEADERS ─── */
+    .diff-section-label {
+      font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      margin: 22px 0 10px;
+    }
+
+    /* ─── TOOL CALLS TABLE ─── */
+    .tool-call-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .tool-call-table thead th {
+      text-align: left;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      padding: 10px 14px;
+      background: #1c1c1c;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tool-call-table thead th.step-col { width: 50px; }
+
+    .tool-call-table tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+      vertical-align: middle;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+    }
+
+    .tool-call-table tbody tr:last-child td { border-bottom: none; }
+
+    .tool-call-table tbody td.step-cell {
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+    }
+
+    .tool-call-table tbody td.added {
+      background: var(--diff-add);
+    }
+
+    .tool-call-table tbody td.removed {
+      background: var(--diff-rm);
+    }
+
+    .tool-call-table tbody td.same {
+      color: var(--text-secondary);
+    }
+
+    .tool-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .tool-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .tool-tag.added::before { background: var(--accent-green); }
+    .tool-tag.removed::before { background: var(--accent-red); }
+    .tool-tag.error::before { background: var(--accent-red); }
+
+    .empty-cell { color: var(--text-muted); font-family: 'Inter', sans-serif; }
+
+    /* ─── FINAL OUTPUT BLOCK ─── */
+    .output-block {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 7px;
+      padding: 12px 14px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-primary);
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .output-block.fail {
+      border-color: var(--diff-rm-border);
+    }
+
+    /* ─── CHECKS TABLE ─── */
+    .checks-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .checks-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .checks-table thead th {
+      text-align: left;
+      font-size: 11.5px; font-weight: 500;
+      color: var(--text-secondary);
+      padding: 10px 14px;
+      background: #1c1c1c;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .checks-table tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .checks-table tbody tr:last-child td { border-bottom: none; }
+
+    .check-name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .check-result {
+      display: inline-flex; align-items: center;
+      font-size: 11.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .check-result.pass { color: var(--active-badge-text); background: var(--active-badge-bg); }
+    .check-result.fail { color: var(--regression-text); background: var(--regression-bg); }
+
+    /* Footer */
+    .footer-links {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px; padding: 28px 0 16px; margin-top: auto;
+    }
+    .footer-link {
+      font-size: 12.5px; color: var(--text-secondary);
+      text-decoration: none; transition: color 0.1s;
+    }
+    .footer-link:hover { color: var(--text-primary); }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-name">Claude Console</span>
+      <button class="brand-toggle" aria-label="Toggle sidebar">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1.5" y="2.5" width="13" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+          <line x1="6" y1="2.5" x2="6" y2="13.5" stroke="currentColor" stroke-width="1.3" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="workspace-selector">
+      <svg class="workspace-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 1.5L13.5 4.5V11.5L8 14.5L2.5 11.5V4.5L8 1.5Z" stroke="currentColor" stroke-width="1.3"
+          stroke-linejoin="round" fill="none" />
+        <path d="M8 1.5V8M8 8L13.5 4.5M8 8L2.5 4.5M8 8V14.5" stroke="currentColor" stroke-width="1.3"
+          stroke-linejoin="round" />
+      </svg>
+      <span class="workspace-label">Default</span>
+      <span class="workspace-chevron">▾</span>
+    </div>
+
+    <nav class="nav-section">
+      <a href="dashboard-demo.html" class="nav-item">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 8L8 3L13 8V13a1 1 0 01-1 1H9.5V10h-3v4H4a1 1 0 01-1-1V8z" stroke="currentColor"
+            stroke-width="1.3" stroke-linejoin="round" />
+        </svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="6" cy="10" r="3" stroke="currentColor" stroke-width="1.3" />
+          <path d="M8.2 8.5L13.5 3.2M11.5 5.2L13 6.7M10 6.7L11.5 8.2" stroke="currentColor" stroke-width="1.3"
+            stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        API keys
+      </a>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.5 3L13 5.5L7 11.5L4 12L4.5 9L10.5 3Z" stroke="currentColor" stroke-width="1.3"
+            stroke-linejoin="round" />
+        </svg>
+        Build
+        <span class="chevron">▾</span>
+      </a>
+      <a href="#" class="nav-sub-item">Workbench</a>
+      <a href="#" class="nav-sub-item">Files</a>
+      <a href="#" class="nav-sub-item">Skills</a>
+      <a href="#" class="nav-sub-item">Batches</a>
+
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.3" />
+          <circle cx="11" cy="11" r="2" stroke="currentColor" stroke-width="1.3" />
+          <path d="M6.5 6.5L9.5 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+          <path d="M11 5L13 5M13 5L13 7M13 5L11 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Managed Agents
+        <span class="chevron">▾</span>
+      </a>
+      <a href="#" class="nav-sub-item">Quickstart</a>
+      <a href="agents.html" class="nav-sub-item">Agents</a>
+      <a href="sessions.html" class="nav-sub-item">Sessions</a>
+      <a href="managed-agent-evals.html" class="nav-sub-item active">
+        Evaluations
+        <span class="nav-badge">New</span>
+      </a>
+      <a href="#" class="nav-sub-item">
+        Deployments
+        <span class="nav-badge">New</span>
+      </a>
+      <a href="#" class="nav-sub-item">Environments</a>
+      <a href="#" class="nav-sub-item">Credential vaults</a>
+      <a href="#" class="nav-sub-item">Memory stores</a>
+
+      <a href="#" class="nav-item" style="margin-top: 4px;">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 2.5h7a2 2 0 012 2V13a0.5 0.5 0 01-0.5 0.5H4.5A1.5 1.5 0 013 12V2.5z" stroke="currentColor"
+            stroke-width="1.3" stroke-linejoin="round" />
+          <path d="M3 12a1.5 1.5 0 011.5-1.5H12" stroke="currentColor" stroke-width="1.3" />
+        </svg>
+        Documentation
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="credits-row">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" />
+          <path d="M8 4.5V8L10 9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        Credits
+        <span class="credits-amount">$4.43</span>
+      </div>
+      <div class="user-row">
+        <div class="user-avatar">P</div>
+        <div class="user-info">
+          <span class="user-name">Potato</span>
+          <span class="user-meta">Admin · Potato's I…</span>
+        </div>
+        <span class="user-chevron">▾</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════ MAIN ═══════════════════════ -->
+  <main class="main">
+    <div class="content-wrap">
+
+      <div class="breadcrumb">
+        <a href="managed-agent-evals.html">Evaluations</a>
+        <span class="breadcrumb-sep">/</span>
+        <a href="managed-agent-evals-results.html">Coding Agent Regression Suite</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Fix auth bug in middleware</span>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Fix auth bug in middleware</h1>
+          <div class="scenario-meta-row">
+            <span>scn_01…aQp</span>
+            <span class="meta-dot"></span>
+            <span class="verdict-badge regression">Regression</span>
+            <span class="meta-dot"></span>
+            <span>Cost delta: <span style="color: var(--accent-red);">+12%</span></span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="btn">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4.5L7.5 9L13 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 7.5L7.5 12L13 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Mark candidate better
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8H13M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to results
+          </button>
+        </div>
+      </div>
+
+      <!-- Scenario input -->
+      <div class="input-card">
+        <div class="input-card-label">Initial task</div>
+        <div class="input-card-body">
+          The /api/admin endpoint returns 200 for unauthenticated requests on staging. Investigate the middleware chain
+          and patch the issue so non-admin tokens are rejected. Verify by running the existing integration tests.
+        </div>
+      </div>
+
+      <!-- Baseline vs Candidate headers -->
+      <div class="diff-grid">
+        <div class="diff-col">
+          <div class="diff-col-head">
+            <span class="diff-col-label">Baseline</span>
+            <span class="diff-col-meta">claude-opus-4-7</span>
+          </div>
+          <div class="diff-col-body">
+            <div class="metric-row">
+              <div class="metric-tile">
+                <div class="metric-tile-label">Cost</div>
+                <div class="metric-tile-val">$0.41</div>
+                <div class="metric-tile-delta neutral">—</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Latency</div>
+                <div class="metric-tile-val">38s</div>
+                <div class="metric-tile-delta neutral">—</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Tokens</div>
+                <div class="metric-tile-val">24.1K</div>
+                <div class="metric-tile-delta neutral">—</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Tool errors</div>
+                <div class="metric-tile-val">0</div>
+                <div class="metric-tile-delta neutral">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="diff-col">
+          <div class="diff-col-head">
+            <span class="diff-col-label">Candidate</span>
+            <span class="diff-col-meta">claude-opus-4-8</span>
+          </div>
+          <div class="diff-col-body">
+            <div class="metric-row">
+              <div class="metric-tile">
+                <div class="metric-tile-label">Cost</div>
+                <div class="metric-tile-val">$0.46</div>
+                <div class="metric-tile-delta pos">+12%</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Latency</div>
+                <div class="metric-tile-val">48s</div>
+                <div class="metric-tile-delta pos">+26%</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Tokens</div>
+                <div class="metric-tile-val">27.8K</div>
+                <div class="metric-tile-delta pos">+15%</div>
+              </div>
+              <div class="metric-tile">
+                <div class="metric-tile-label">Tool errors</div>
+                <div class="metric-tile-val">1</div>
+                <div class="metric-tile-delta pos">+1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tool calls -->
+      <div class="diff-section-label">Tool calls</div>
+      <table class="tool-call-table">
+        <thead>
+          <tr>
+            <th class="step-col">Step</th>
+            <th>Baseline</th>
+            <th>Candidate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="step-cell">1</td>
+            <td class="same"><span class="tool-tag">search_docs("auth middleware")</span></td>
+            <td class="same"><span class="tool-tag">search_docs("auth middleware")</span></td>
+          </tr>
+          <tr>
+            <td class="step-cell">2</td>
+            <td class="same"><span class="tool-tag">read_file("middleware/auth.ts")</span></td>
+            <td class="same"><span class="tool-tag">read_file("middleware/auth.ts")</span></td>
+          </tr>
+          <tr>
+            <td class="step-cell">3</td>
+            <td class="same"><span class="tool-tag">edit_file("middleware/auth.ts")</span></td>
+            <td class="added"><span class="tool-tag added">run_tests("auth.test.ts")</span></td>
+          </tr>
+          <tr>
+            <td class="step-cell">4</td>
+            <td class="same"><span class="tool-tag">run_tests("auth.test.ts")</span></td>
+            <td class="added"><span class="tool-tag added">edit_file("middleware/auth.ts")</span></td>
+          </tr>
+          <tr>
+            <td class="step-cell">5</td>
+            <td class="same"><span class="empty-cell">—</span></td>
+            <td class="removed"><span class="tool-tag error">run_tests → 2 failures</span></td>
+          </tr>
+          <tr>
+            <td class="step-cell">6</td>
+            <td class="same"><span class="empty-cell">—</span></td>
+            <td class="removed"><span class="tool-tag error">edit_file → applied incorrect patch</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Final output -->
+      <div class="diff-section-label">Final output</div>
+      <div class="diff-grid">
+        <div class="diff-col">
+          <div class="diff-col-head">
+            <span class="diff-col-label">Baseline</span>
+            <span class="diff-col-meta">Pass</span>
+          </div>
+          <div class="diff-col-body">
+            <div class="output-block">Patched middleware/auth.ts to verify the JWT role claim before
+admitting requests to /api/admin. Added a unit test that exercises a
+non-admin token and confirms a 401. All 14 integration tests pass.
+
+Files changed:
+  - middleware/auth.ts
+  - middleware/auth.test.ts</div>
+          </div>
+        </div>
+        <div class="diff-col">
+          <div class="diff-col-head">
+            <span class="diff-col-label">Candidate</span>
+            <span class="diff-col-meta">Fail</span>
+          </div>
+          <div class="diff-col-body">
+            <div class="output-block fail">Attempted to refactor the entire auth chain. New verifyAdmin()
+helper introduced but accidentally short-circuits the existing
+requireAuth() guard for non-admin paths.
+
+2 integration tests are now failing:
+  - auth.test.ts: "rejects unauthenticated /api/users"
+  - auth.test.ts: "preserves session cookie"
+
+Need maintainer review before applying patch.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checks -->
+      <div class="diff-section-label">Check results</div>
+      <div class="checks-card">
+        <table class="checks-table">
+          <thead>
+            <tr>
+              <th>Check</th>
+              <th>Type</th>
+              <th>Baseline</th>
+              <th>Candidate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="check-name">must_call_tool("edit_file")</span></td>
+              <td style="color: var(--text-secondary); font-size: 12px;">Tool</td>
+              <td><span class="check-result pass">Pass</span></td>
+              <td><span class="check-result pass">Pass</span></td>
+            </tr>
+            <tr>
+              <td><span class="check-name">tool_call_count &lt;= 5</span></td>
+              <td style="color: var(--text-secondary); font-size: 12px;">Tool</td>
+              <td><span class="check-result pass">Pass</span></td>
+              <td><span class="check-result fail">Fail</span></td>
+            </tr>
+            <tr>
+              <td><span class="check-name">output.contains("integration tests pass")</span></td>
+              <td style="color: var(--text-secondary); font-size: 12px;">Output</td>
+              <td><span class="check-result pass">Pass</span></td>
+              <td><span class="check-result fail">Fail</span></td>
+            </tr>
+            <tr>
+              <td><span class="check-name">no_tool_error</span></td>
+              <td style="color: var(--text-secondary); font-size: 12px;">Runtime</td>
+              <td><span class="check-result pass">Pass</span></td>
+              <td><span class="check-result fail">Fail</span></td>
+            </tr>
+            <tr>
+              <td><span class="check-name">max_token_cost &lt;= $0.50</span></td>
+              <td style="color: var(--text-secondary); font-size: 12px;">Runtime</td>
+              <td><span class="check-result pass">Pass</span></td>
+              <td><span class="check-result pass">Pass</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer-links">
+        <a class="footer-link" href="#">API status</a>
+        <a class="footer-link" href="#">Help and support</a>
+        <a class="footer-link" href="#">Feedback</a>
+      </div>
+
+    </div>
+  </main>
+</body>
+
+</html>
