@@ -50,13 +50,6 @@
       position: 'bottom',
       prepare: () => showTraceForHotSession(),
     },
-    {
-      target: '[data-tour="email-alert-panel"]',
-      title: 'Follow the email alert',
-      body: 'The alert includes the agent, session, trigger reason, and a direct trace link so the creator can investigate before the cost incident grows.',
-      position: 'left',
-      prepare: () => showTraceForHotSession(),
-    },
   ];
 
   let currentIdx = -1;
