@@ -36,13 +36,6 @@
       prepare: () => showDetectorModal(),
     },
     {
-      target: '[data-tour="detector-email-row"]',
-      title: 'Control email alerts',
-      body: 'Email alerts can be enabled separately from detection. When on, the agent creator gets the alert with a one-hour per-agent cooldown.',
-      position: 'left',
-      prepare: () => showDetectorModal(),
-    },
-    {
       target: '[data-tour="session-anomaly-row"]',
       title: 'Open the trace',
       body: 'Click Next to inspect the anomalous session trace and see exactly why the run was flagged.',
