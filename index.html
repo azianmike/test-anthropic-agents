@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anthropic API Explorer</title>
+  <title>Claude Platform improvements</title>
   <meta name="description"
     content="Interactive demos and tools for the Anthropic Claude API — rate limits, managed agents, and more." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,14 +26,10 @@
       --border: #272727;
       --border-hover: #3a3a3a;
       --text: #e8e8e8;
-      --text-sub: #888;
-      --text-muted: #444;
+      --text-sub: #999;
+      --text-muted: #555;
       --accent: #d4793a;
       --accent-dim: rgba(212, 121, 58, 0.12);
-      --blue: #5ba3e8;
-      --blue-dim: rgba(91, 163, 232, 0.10);
-      --green: #3aad6e;
-      --green-dim: rgba(58, 173, 110, 0.10);
     }
 
     body {
@@ -45,40 +41,13 @@
       flex-direction: column;
     }
 
-    /* ── NOISE TEXTURE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── GRADIENT GLOW ── */
-    .bg-glow {
-      position: fixed;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 700px;
-      height: 500px;
-      background: radial-gradient(ellipse at center, rgba(212, 121, 58, 0.07) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── NAVBAR ── */
+    /* ── NAV ── */
     nav {
-      position: relative;
-      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 18px 40px;
       border-bottom: 1px solid var(--border);
-      background: rgba(15, 15, 15, 0.85);
-      backdrop-filter: blur(12px);
     }
 
     .nav-brand {
@@ -89,8 +58,8 @@
     }
 
     .nav-logo {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       background: var(--accent);
       border-radius: 6px;
       display: flex;
@@ -99,13 +68,13 @@
     }
 
     .nav-logo svg {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       fill: #fff;
     }
 
     .nav-brand-name {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--text);
       letter-spacing: 0.01em;
@@ -134,333 +103,293 @@
     .nav-cta {
       font-size: 12.5px;
       font-weight: 500;
-      color: var(--text);
-      background: var(--surface2);
-      border: 1px solid var(--border-hover);
+      color: var(--text-sub);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 6px;
       padding: 6px 14px;
       text-decoration: none;
-      transition: background 0.15s, border-color 0.15s;
+      transition: color 0.15s, border-color 0.15s;
     }
 
     .nav-cta:hover {
-      background: #2a2a2a;
-      border-color: #4a4a4a;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 96px 24px 72px;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--accent-dim);
-      border: 1px solid rgba(212, 121, 58, 0.25);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 11.5px;
-      color: var(--accent);
-      font-weight: 500;
-      margin-bottom: 24px;
-      letter-spacing: 0.03em;
-    }
-
-    .hero-badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.35;
-      }
-    }
-
-    .hero h1 {
-      font-size: 48px;
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
       color: var(--text);
-      margin-bottom: 18px;
+      border-color: var(--border-hover);
     }
 
-    .hero h1 .gradient-text {
-      background: linear-gradient(135deg, #d4793a 0%, #e8a870 50%, #d4793a 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 4s linear infinite;
+    /* ── DOCUMENT ── */
+    .doc {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 24px 100px;
+      width: 100%;
+      flex: 1;
     }
 
-    @keyframes shimmer {
-      0% {
-        background-position: 0% center;
-      }
-
-      100% {
-        background-position: 200% center;
-      }
+    .prompt-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
     }
 
-    .hero p {
-      font-size: 16px;
+    /* ── PROMPT BLOCK ── */
+    .prompt-block {
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+
+    .prompt-block .pb-section {
+      margin-bottom: 20px;
+    }
+
+    .prompt-block .pb-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .prompt-block .pb-heading {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .prompt-block p {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.75;
+      margin-bottom: 10px;
+    }
+
+    .prompt-block p:last-child {
+      margin-bottom: 0;
+    }
+
+    .prompt-block ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .prompt-block ul li {
+      font-size: 14px;
       color: var(--text-sub);
       line-height: 1.65;
-      max-width: 520px;
-      margin: 0 auto 40px;
+      padding-left: 16px;
+      position: relative;
     }
 
-    .hero-actions {
+    .prompt-block ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    .prompt-block ul li span {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .doc-body p {
+      font-size: 15.5px;
+      color: var(--text-sub);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .doc-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .doc-body a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212, 121, 58, 0.35);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .doc-body a:hover {
+      color: #e8914f;
+      border-bottom-color: rgba(212, 121, 58, 0.75);
+    }
+
+    .doc-h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text);
+      margin-top: 52px;
+      margin-bottom: 14px;
+    }
+
+    .doc-body ol {
+      padding-left: 22px;
+      list-style: decimal;
+      margin-bottom: 20px;
+    }
+
+    .doc-body ul {
+      padding-left: 0;
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .doc-body li {
+      font-size: 15px;
+      color: var(--text-sub);
+      line-height: 1.75;
+      margin-bottom: 6px;
+    }
+
+    .doc-body ul>li {
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .doc-body ul>li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    .doc-body ol>li {
+      padding-left: 4px;
+    }
+
+    .doc-body ul ul {
+      margin-top: 6px;
+      margin-bottom: 0;
+      padding-left: 14px;
+    }
+
+    .doc-body ul ul>li::before {
+      content: '·';
+    }
+
+    .doc-body strong {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .doc-body em {
+      font-style: italic;
+    }
+
+    .doc-disclaimer {
+      color: var(--text-muted) !important;
+      font-size: 14px !important;
+      margin-bottom: 24px !important;
+    }
+
+    .tweet-img {
+      display: block;
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 8px 0 16px;
+    }
+
+    .doc-page-link {
+      margin: 20px 0 36px;
+    }
+
+    .problem-head {
+      margin-top: 36px;
+    }
+
+    /* ── PAGE LINKS ── */
+    .page-links {
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .page-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .page-link:hover {
+      border-color: var(--border-hover);
+      background: var(--surface2);
+    }
+
+    .page-link-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--accent-dim);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      flex-shrink: 0;
+      color: var(--accent);
     }
 
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-size: 13.5px;
+    .page-link-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .page-link-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .page-link-title {
+      font-size: 14px;
       font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      padding: 11px 22px;
-      border-radius: 7px;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      color: var(--text);
+      margin-bottom: 2px;
     }
 
-    .btn-primary:hover {
-      background: #c06830;
-      transform: translateY(-1px);
+    .page-link-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .btn-primary svg {
+    .page-link-arrow {
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: color 0.15s, transform 0.15s;
+    }
+
+    .page-link:hover .page-link-arrow {
+      color: var(--text-sub);
+      transform: translateX(2px);
+    }
+
+    .page-link-arrow svg {
       width: 15px;
       height: 15px;
     }
 
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--text-sub);
-      font-size: 13.5px;
-      font-weight: 500;
-      font-family: 'Inter', sans-serif;
-      padding: 10px 20px;
-      border-radius: 7px;
-      text-decoration: none;
-      border: 1px solid var(--border);
-      background: transparent;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .btn-ghost:hover {
-      color: var(--text);
-      border-color: var(--border-hover);
-      background: var(--surface2);
-    }
-
-    .btn-ghost svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* ── DIVIDER ── */
-    .section-divider {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 0 40px 20px;
-    }
-
-    .section-divider span {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-weight: 600;
-    }
-
-    /* ── DEMO CARDS GRID ── */
-    .cards-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
-      padding: 0 40px 80px;
-      max-width: 1100px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .demo-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .demo-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, transparent 60%, rgba(255, 255, 255, 0.015) 100%);
-      pointer-events: none;
-    }
-
-    .demo-card:hover {
-      border-color: var(--border-hover);
-      background: var(--surface2);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    .demo-card.featured {
-      border-color: rgba(212, 121, 58, 0.3);
-      background: linear-gradient(135deg, var(--surface) 0%, rgba(212, 121, 58, 0.04) 100%);
-    }
-
-    .demo-card.featured:hover {
-      border-color: rgba(212, 121, 58, 0.5);
-      box-shadow: 0 8px 32px rgba(212, 121, 58, 0.08);
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .card-icon svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .card-icon.orange {
-      background: var(--accent-dim);
-      color: var(--accent);
-    }
-
-    .card-icon.blue {
-      background: var(--blue-dim);
-      color: var(--blue);
-    }
-
-    .card-icon.green {
-      background: var(--green-dim);
-      color: var(--green);
-    }
-
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .card-badge {
-      font-size: 9.5px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 10px;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .card-badge.live {
-      background: rgba(58, 173, 110, 0.15);
-      color: #3aad6e;
-      border: 1px solid rgba(58, 173, 110, 0.2);
-    }
-
-    .card-badge.soon {
-      background: rgba(136, 136, 136, 0.1);
-      color: #666;
-      border: 1px solid #2a2a2a;
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-
-    .card-desc {
-      font-size: 12.5px;
-      color: var(--text-sub);
-      line-height: 1.6;
-    }
-
-    .card-footer {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: auto;
-      padding-top: 6px;
-      border-top: 1px solid var(--border);
-    }
-
-    .card-footer.active {
-      color: var(--accent);
-    }
-
-    .card-footer svg {
-      width: 13px;
-      height: 13px;
-    }
-
     /* ── FOOTER ── */
     footer {
-      position: relative;
-      z-index: 1;
-      margin-top: auto;
       border-top: 1px solid var(--border);
       padding: 20px 40px;
       display: flex;
@@ -495,8 +424,6 @@
 
 <body>
 
-  <div class="bg-glow"></div>
-
   <!-- NAV -->
   <nav>
     <a href="index.html" class="nav-brand">
@@ -510,158 +437,291 @@
     <div class="nav-links">
       <a href="https://docs.anthropic.com" target="_blank" rel="noopener" class="nav-link">Docs</a>
       <a href="https://github.com/azianmike/test-anthropic-agents" target="_blank" rel="noopener" class="nav-cta">
-        View on GitHub
+        GitHub
       </a>
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-badge">Interactive Demos</div>
-    <h1>Explore the<br /><span class="gradient-text">Claude API</span></h1>
-    <p>
-      Interactive tools and UI demos built around the Anthropic API — visualize rate limits,
-      manage agents, and explore the Claude Console experience.
-    </p>
-    <div class="hero-actions">
-      <a href="dashboard-demo.html" class="btn-primary" id="hero-cta">
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="2" width="5" height="5" rx="0.8" fill="currentColor" />
-          <rect x="9" y="2" width="5" height="5" rx="0.8" fill="currentColor" opacity="0.5" />
-          <rect x="2" y="9" width="5" height="5" rx="0.8" fill="currentColor" opacity="0.5" />
-          <rect x="9" y="9" width="5" height="5" rx="0.8" fill="currentColor" opacity="0.5" />
-        </svg>
-        Open Developer Dashboard
-      </a>
-      <a href="https://github.com/azianmike/test-anthropic-agents" target="_blank" rel="noopener" class="btn-ghost">
-        <svg viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
-        </svg>
-        GitHub
-      </a>
-    </div>
-  </section>
+  <!-- DOCUMENT -->
+  <div class="doc">
 
-  <!-- CARDS -->
-  <div class="section-divider">
-    <span>Available Demos</span>
-  </div>
+    <p class="prompt-label">Prompt</p>
 
-  <div class="cards-grid">
-
-    <!-- Developer Dashboard Demo -->
-    <a href="dashboard-demo.html" class="demo-card featured" id="card-dashboard">
-      <div class="card-top">
-        <div class="card-icon orange">
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor" />
-            <rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
-            <rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
-            <rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.5" />
-          </svg>
-        </div>
-        <span class="card-badge live">Live</span>
+    <div class="prompt-block">
+      <div class="pb-section">
+        <div class="pb-heading">Scenario</div>
+        <p>
+          You're the Growth PM for the Claude Platform (platform.claude.com) and the north-star goal
+          for your team is to increase Claude API revenue.
+        </p>
       </div>
-      <div>
-        <div class="card-title">Console Dashboard</div>
-        <div class="card-desc">
-          Recreate the developer console home page. Includes dynamic SVG usage chart metrics
-          with interactive time range toggles, credit balance widgets, and links to rate limit settings.
-        </div>
-      </div>
-      <div class="card-footer active">
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-        Open demo →
-      </div>
-    </a>
-
-    <!-- Rate Limits Demo -->
-    <a href="rate-limits.html" class="demo-card" id="card-rate-limits">
-      <div class="card-top">
-        <div class="card-icon orange">
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="12" width="4" height="6" rx="1" fill="currentColor" opacity="0.5" />
-            <rect x="8" y="7" width="4" height="11" rx="1" fill="currentColor" opacity="0.75" />
-            <rect x="14" y="3" width="4" height="15" rx="1" fill="currentColor" />
-          </svg>
-        </div>
-        <span class="card-badge live">Live</span>
-      </div>
-      <div>
-        <div class="card-title">Rate Limit Status</div>
-        <div class="card-desc">
-          Visualize peak-minute API usage across all Claude models. Includes tier progression,
-          live quota tracking, an "Add credits" modal, and interactive tier comparison tables.
-        </div>
-      </div>
-      <div class="card-footer active">
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-        Open demo →
-      </div>
-    </a>
-
-    <!-- Managed Agents (coming soon) -->
-    <div class="demo-card" id="card-managed-agents">
-      <div class="card-top">
-        <div class="card-icon blue">
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5" />
-            <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
-        </div>
-        <span class="card-badge soon">Soon</span>
-      </div>
-      <div>
-        <div class="card-title">Managed Agents</div>
-        <div class="card-desc">
-          Configure agents, environments, and stream session responses through
-          the Anthropic Managed Agents API with live TypeScript examples.
-        </div>
-      </div>
-      <div class="card-footer">
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3" />
-          <path d="M8 5v3l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
-        </svg>
-        Coming soon
+      <div class="pb-section">
+        <div class="pb-heading">Task</div>
+        <p>
+          Present three growth ideas to drive revenue growth for Claude API, covering:
+        </p>
+        <ul>
+          <li>One small tactical idea <span>— 2–3 days or less of engineering work</span></li>
+          <li>One medium idea <span>— 2 weeks of engineering work</span></li>
+          <li>One big bet <span>— 1–2 months of engineering work</span></li>
+        </ul>
+        <p style="margin-top: 14px;">
+          For each idea, make sure to cover key aspects of your thinking (e.g. hypothesis, success metrics,
+          implementation details, prioritization, risks and mitigations).
+        </p>
+        <p>
+          Your ideas may influence revenue either directly or indirectly (e.g. increasing acquisition, activation,
+          or retention).
+        </p>
       </div>
     </div>
 
-    <!-- API Key Explorer (coming soon) -->
-    <div class="demo-card" id="card-api-keys">
-      <div class="card-top">
-        <div class="card-icon green">
-          <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="7.5" cy="10" r="4" stroke="currentColor" stroke-width="1.5" />
-            <path d="M10.5 10h7M15 8v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-          </svg>
-        </div>
-        <span class="card-badge soon">Soon</span>
-      </div>
-      <div>
-        <div class="card-title">API Key Manager</div>
-        <div class="card-desc">
-          Create, rotate, and manage API keys with scoped permissions.
-          Inspect usage per key and set expiration policies.
-        </div>
-      </div>
-      <div class="card-footer">
-        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3" />
-          <path d="M8 5v3l1.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
-        </svg>
-        Coming soon
-      </div>
-    </div>
+    <div class="doc-body">
 
+      <h2 class="doc-h2" style="margin-top:0">First, what is Claude Platform? Why does it exist?</h2>
+      <p>At a high level, the mission of the Claude Platform is to help guide, monitor, and improve our customer's AI
+        tools. Our customers:</p>
+      <ol>
+        <li>use our docs to help guide them through their development journey</li>
+        <li>monitor usage, costs, and logs for their API calls and agents</li>
+        <li>improve their AI via our tooling and insights</li>
+      </ol>
+      <p>Without the Claude Platform, our customers would not be as successful using our APIs. Additionally, they would
+        likely seek out other tools (or even model providers), causing customers to churn or worse, never try us to
+        begin with.</p>
+
+      <h2 class="doc-h2">Who uses Claude Platform today?</h2>
+      <p>The users who use our platform today can be separated into three buckets:</p>
+      <ol>
+        <li>Non-technical consumers/hobbyist discovering Claude capabilities, building a small tool, or using a 3rd
+          party tool (e.g. OpenClaw)</li>
+        <li>Software developers at businesses who are building, monitoring, and improving their AI use cases</li>
+        <li>Finance (or admin) leaders who are monitoring costs, paying invoices, and managing teammate access</li>
+      </ol>
+      <p>While all are important, we need to narrow our focus. I propose these 3 principles to help us align
+        prioritization:</p>
+      <ul>
+        <li>Prioritize who makes the decision on model/API to use</li>
+        <li>Prioritize users whose usage growth compounds</li>
+        <li>Prioritize users who control large spend</li>
+      </ul>
+      <p>Based on these principles, I believe our core focus should be on software developers (#2). This is our "hero"
+        set of users who are deciding what models/APIs to build with day in and day out. The more we build for them and
+        solve their problems, the more likely it is a business decides to adopt, retain, and grow with Anthropic. While
+        consumers/hobbyists are important, they generally do not control large spend. Additionally, finance leaders do
+        control large spend but are less likely to make technical decisions on a model or API to use.</p>
+      <p>Specifically I'd focus on software developers at fast growing AI native startups, often series A to series D.
+        While enterprises likely drive the largest absolute API spend, AI startups today are compounding growth faster,
+        which I believe leads to more token and API revenue usage long term than today's enterprises. They're likely AI
+        native, have the most frontier use cases, are scaling tokens and spend the fastest, and are ruthless about
+        squeezing out as much performance from each model.</p>
+      <p>These software developers are savvy and intelligent, they have likely already done research on the top AI
+        models and have either chosen Anthropic's models or are currently evaluating and comparing to competitor's
+        models.</p>
+      <p>They're much less likely to be convinced by marketing and sales speak and much more convinced by data,
+        analysis, and product capabilities.</p>
+
+      <h2 class="doc-h2">Strategy</h2>
+      <p>How we win: Acquisition is model and product-led — these developers come to us because our models win on their
+        evals or our APIs fit their needs better, not because of Platform features — so top-of-funnel demand generation
+        isn't our lever. The Platform's job is to make "scale your AI workloads on Claude" the safe, obvious, and
+        reliable choice.</p>
+      <p>Our north star is API revenue, but revenue is lagging and influenced by factors outside Platform's control
+        (model launches, pricing, etc). The primary metric our team will be accountable for is <strong>weekly revenue
+          per active org</strong> (active org = org with paid API usage in the last 7 days). This directly captures our
+        theory of growth: developers who succeed with the Platform scale their usage.</p>
+      <p>Platform engagement metrics are diagnostics, not goals — a healthy production customer might never log into the
+        console, and that's success, not churn for the Platform. And of course, there are weaknesses to our primary
+        metric, which is why we'll pair it with secondary metrics like number of active paid orgs, churn, and
+        fraud/abuse. With that framing, the metrics we'll track:</p>
+      <ul>
+        <li><strong>North star</strong>: weekly API revenue</li>
+        <li><strong>Team primary metric:</strong> weekly revenue per active org, net revenue retention (quarterly)</li>
+        <li><strong>Secondary</strong>:
+          <ul>
+            <li><strong>Acquisition / conversion:</strong> new orgs created, teammates invited</li>
+            <li><strong>Activation:</strong> time from signup to first API call, time to first production-scale workload
+              (e.g., sustained daily token usage), % of active orgs adopting new model/API features within 30 days of
+              launch</li>
+            <li><strong>Engagement:</strong> weekly active orgs in the console, actions taken on Console, docs
+              engagement on new model/API launches, token/API usage growth</li>
+            <li><strong>Monetization</strong>: overall API revenue, number of paying orgs, number of active orgs with
+              API traffic, gross margin,</li>
+          </ul>
+        </li>
+        <li><strong>Counter-metrics:</strong> support ticket volume, fraud/abuse, account takeovers, credit card
+          disputes and refunds</li>
+      </ul>
+
+      <h2 class="doc-h2">So what problems do these developers have?</h2>
+      <p class="doc-disclaimer"><em>Disclaimer: I'd obviously talk to customers. But in lieu of that, I'll use my
+          intuition + customer feedback in public spaces like X</em></p>
+
+      <p class="problem-head"><strong>Problem #1:</strong> As AI-native startups scale quickly, Claude usage can spike
+        quickly and teams may hit rate limits on their primary model, causing 429s.</p>
+      <ul>
+        <li>Customers complaining:
+          <ul>
+            <li><a href="https://x.com/thdxr/status/1900937456188367147" target="_blank"
+                rel="noopener">https://x.com/thdxr/status/1900937456188367147</a></li>
+          </ul>
+        </li>
+      </ul>
+      <img src="screenshot-rate-limits.png"
+        alt="@thdxr on X: the max public rate limit on claude is 400K input tokens per minute — i don't really understand how people are building products on this"
+        class="tweet-img" />
+      <ul>
+        <li>Solution (small, 2-3 eng days): In both the Platform Console and Docs, when an org hits 429s on a model,
+          show a message like: "You're rate-limited on Sonnet. You can unlock higher rate limits by adding credits to
+          upgrade your tier." Then add an easy to click button to purchase more credits to upgrade tier.</li>
+        <li>Hypothesis: Helping fast scaling startups upgrade for more rate limits both unblocks these startups to
+          continue serving customers and increases revenue on Claude instead of pushing customers to competitors.</li>
+        <li>Success metrics: Increase weekly # of customers upgrading tiers, increase total credits purchased per user,
+          increase tokens processed per user, increase total revenue per user, reduction in repeated 429s, reduced
+          support tickets about rate limits</li>
+        <li>Risks: If a customer is in an outage and Claude says "pay us more," it can feel extractive. If they are
+          already Tier 4 or need custom limits, the right CTA may be "Contact sales / request custom limits," not "buy
+          credits."</li>
+      </ul>
+      <div class="doc-page-link">
+        <a href="dashboard-demo.html" class="page-link">
+          <div class="page-link-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor" />
+              <rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.45" />
+              <rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.45" />
+              <rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.45" />
+            </svg>
+          </div>
+          <div class="page-link-text">
+            <div class="page-link-title">Console Dashboard</div>
+            <div class="page-link-desc">Rate limit upgrade prompts, usage charts, credit balance — the developer home
+              screen</div>
+          </div>
+          <div class="page-link-arrow">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </a>
+      </div>
+
+      <p class="problem-head"><strong>Problem #2:</strong> As startups move from simple API calls to long-running
+        agents, costs become harder to predict because one agent can make many model calls, tool calls, and retries
+        before completing a task. Developers lack an easy way to see which agents are burning tokens, detect runaway
+        loops, and monitor spend before an agent turns into a production cost incident.</p>
+      <ul>
+        <li>Customers complaining:
+          <ul>
+            <li><a href="https://x.com/Hartdrawss/status/2059280986039370034" target="_blank"
+                rel="noopener">https://x.com/Hartdrawss/status/2059280986039370034</a></li>
+            <li><a href="https://x.com/jerryjliu0/status/2064887641859088701" target="_blank"
+                rel="noopener">https://x.com/jerryjliu0/status/2064887641859088701</a></li>
+          </ul>
+        </li>
+      </ul>
+      <img src="screenshot-agent-costs.png"
+        alt="@jerryjliu0 on X: concerned about running Fable at API-based billing — token spend at headcount-level costs"
+        class="tweet-img" />
+      <ul>
+        <li>Solution (medium, 2 weeks eng): Receive email alerts when a run exceeds expected spend or token usage at a
+          per agent level.
+          <ul>
+            <li><em>Assumption: We have all the data to track token usage, duration, and account cost structure.</em>
+            </li>
+          </ul>
+        </li>
+        <li>Hypothesis: If developers can observe and detect long-running agent costs, they will feel safer moving more
+          agent workloads into production on Claude instead of limiting rollout or routing work elsewhere.</li>
+        <li>Success metrics: Increase number of production agents using Claude, increase token spend from
+          capped/monitored agents, reduce support tickets, and reduce churn risk.</li>
+        <li>Risks: It could reduce revenue. Mitigate via the counter-metric above; default caps to generous/off; frame
+          UI around anomaly protection, not budgeting down.</li>
+      </ul>
+      <div class="doc-page-link">
+        <a href="managed-agent-usage.html" class="page-link">
+          <div class="page-link-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5" />
+              <path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="page-link-text">
+            <div class="page-link-title">Managed Agents</div>
+            <div class="page-link-desc">Agent session monitoring, anomaly detection, and per-agent cost breakdowns</div>
+          </div>
+          <div class="page-link-arrow">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </a>
+      </div>
+
+      <p class="problem-head"><strong>Problem #3 (big bet):</strong> Teams building long-horizon agents can't
+        confidently answer "did this prompt, tool, or model change make my agent better or worse?" Managed Agents lets
+        them execute and trace individual sessions, but there's no higher-level workflow to run a change across many
+        realistic scenarios, compare baseline vs. candidate, and grade whether trajectories regressed before production.
+      </p>
+      <ul>
+        <li>Customers / market signal: <a href="https://x.com/novasarc01/status/2060403234825785840" target="_blank"
+            rel="noopener">https://x.com/novasarc01/status/2060403234825785840</a>, <a
+            href="https://x.com/i_am_jeganraj/status/2065122606177739001" target="_blank"
+            rel="noopener">https://x.com/i_am_jeganraj/status/2065122606177739001</a></li>
+      </ul>
+      <img src="screenshot-agent-evals.png"
+        alt="@novasarc01 on X: increasingly convinced the best agent evals will come from mining real agent failure traces"
+        class="tweet-img" />
+      <ul>
+        <li>Solution (big bet, 1–2 months eng): Claude Agent Eval Workbench, built on Managed Agents. Teams define eval
+          suites, pick a baseline and candidate agent version, run both across the same scenarios, and compare final
+          outputs, tool calls, event traces, success rate, latency, and token/session cost. Grading combines
+          deterministic checks and a human review queue to flag likely regressions — this is the hard part and the
+          differentiator, since raw tracing already exists.</li>
+        <li>Hypothesis: If developers can reliably evaluate long-horizon agent changes before production, they will
+          iterate faster, adopt new Claude models sooner, and scale more agent workloads on Claude with confidence.</li>
+        <li>Success metrics: Increase eval runs per active org, increase new model adoption among agent-building orgs,
+          increase production agent token spend, reduce agent regression incidents, and reduce time from model launch to
+          customer upgrade.</li>
+        <li>Risks: The main risk is limiting the product to Managed Agents users only. Strategically though this will
+          hopefully be a carrot for customers to both adopt and continue to use Managed Agents.</li>
+      </ul>
+      <div class="doc-page-link">
+        <a href="managed-agent-evals.html" class="page-link">
+          <div class="page-link-icon">
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 5h12M4 10h8M4 15h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              <circle cx="15.5" cy="13.5" r="3" stroke="currentColor" stroke-width="1.5" />
+              <path d="M14.5 13.5l.75.75 1.5-1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="page-link-text">
+            <div class="page-link-title">Evaluations</div>
+            <div class="page-link-desc">Eval suite management, baseline vs. candidate comparison, run history</div>
+          </div>
+          <div class="page-link-arrow">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </a>
+      </div>
+
+      <h2 class="doc-h2">Prioritization</h2>
+      <p>With unlimited resources, we should of course do all of these solutions. However, with limited resources, we
+        must prioritize. I'll propose prioritizing based 3 principles:</p>
+      <ul>
+        <li>Estimated impact to our north star metric (revenue)</li>
+        <li>Estimated effort to launch an MVP</li>
+        <li>Differentiates our core product</li>
+      </ul>
+
+    </div>
   </div>
 
   <!-- FOOTER -->
