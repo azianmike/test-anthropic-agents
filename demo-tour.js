@@ -26,8 +26,20 @@
       page: 'sessions.html',
       target: '#row-pop-0 .popover-item.highlight',
       title: 'Add to eval suite',
-      body: 'This is the heart of the workflow: turn a real session into a reusable scenario. Captures the input, tool trace, final output, cost, and latency. Click Next to jump to the suite.',
+      body: 'This is the heart of the workflow: turn a real session into a reusable scenario. Captures the input, tool trace, final output, cost, and latency.',
       position: 'left',
+      action: () => document.querySelector('#row-pop-0 .popover-item.highlight').click(),
+    },
+    {
+      page: 'sessions.html',
+      target: '#add-modal .modal-box',
+      title: 'Configure the scenario',
+      body: 'Pick the suite and confirm. The scenario lands in the suite ready to run against future model or prompt changes.',
+      position: 'left',
+      action: () => {
+        const m = document.getElementById('add-modal');
+        if (m) m.classList.remove('open');
+      },
       nextPage: 'managed-agent-evals.html',
     },
     {
