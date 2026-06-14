@@ -1042,7 +1042,7 @@
       </div>
 
       <div class="detector-form">
-        <div class="detector-row">
+        <div class="detector-row" data-tour="detector-cost-row">
           <div class="detector-copy">
             <label class="switch" aria-label="Enable session cost detector">
               <input id="detector-cost-enabled" type="checkbox" checked onchange="syncDetectorInputs()" />
@@ -1060,7 +1060,7 @@
           </label>
         </div>
 
-        <div class="detector-row">
+        <div class="detector-row" data-tour="detector-tokens-row">
           <div class="detector-copy">
             <label class="switch" aria-label="Enable tokens used detector">
               <input id="detector-tokens-enabled" type="checkbox" checked onchange="syncDetectorInputs()" />
@@ -1078,7 +1078,7 @@
           </label>
         </div>
 
-        <div class="detector-row">
+        <div class="detector-row" data-tour="detector-duration-row">
           <div class="detector-copy">
             <label class="switch" aria-label="Enable time spent detector">
               <input id="detector-duration-enabled" type="checkbox" checked onchange="syncDetectorInputs()" />
@@ -1096,7 +1096,7 @@
           </label>
         </div>
 
-        <div class="detector-row">
+        <div class="detector-row" data-tour="detector-email-row">
           <div class="detector-copy">
             <label class="switch" aria-label="Enable email alerts">
               <input id="detector-email-enabled" type="checkbox" checked onchange="updateDetectorPreview()" />
@@ -1120,7 +1120,7 @@
         <div class="preview-count" id="detector-preview"></div>
         <div class="modal-actions">
           <button class="btn" type="button" onclick="resetDetectorDefaults()">Reset defaults</button>
-          <button class="btn btn-primary" type="button" onclick="saveDetectorConfig()">Save</button>
+          <button class="btn btn-primary" type="button" onclick="saveDetectorConfig()" data-tour="detector-save">Save</button>
         </div>
       </div>
     </section>
@@ -1474,8 +1474,10 @@
       const rows = agents.map(agent => {
         const usage = usageForAgent(agent.id);
         const hasAnomalies = usage.anomalies > 0;
+        const tourRow = agent.id === 'agent_01J_fkGbPW' ? ' data-tour="agent-hot-row"' : '';
+        const tourBadge = agent.id === 'agent_01J_fkGbPW' ? ' data-tour="agent-anomaly-count"' : '';
         return `
-          <tr onclick="openAgentSessions('${agent.id}')">
+          <tr onclick="openAgentSessions('${agent.id}')"${tourRow}>
             <td>
               <div class="name-cell">
                 <span class="name-icon">${agentIcon}</span>
@@ -1490,7 +1492,7 @@
             <td><span class="metric ${THRESHOLDS.costEnabled && usage.cost > THRESHOLDS.cost ? 'high' : ''}">${formatCurrency(usage.cost)}</span></td>
             <td><span class="metric ${THRESHOLDS.tokensEnabled && usage.tokens > THRESHOLDS.tokens ? 'high' : ''}">${formatTokens(usage.tokens)}</span></td>
             <td>
-              <span class="anomaly-badge ${hasAnomalies ? 'alert' : 'none'}">
+              <span class="anomaly-badge ${hasAnomalies ? 'alert' : 'none'}"${tourBadge}>
                 ${hasAnomalies ? usage.anomalies : 'None'}
               </span>
             </td>
@@ -1510,7 +1512,7 @@
 
       root.innerHTML = `
         <div class="usage-table-wrap">
-          <table>
+          <table id="agents-usage-table">
             <thead>
               <tr>
                 <th>Agent</th>
@@ -1534,7 +1536,7 @@
       pageTitle.textContent = 'Sessions';
       pageSubtitle.textContent = 'Trace and debug Claude Managed Agents sessions.';
       headerActions.innerHTML = `
-        <button class="btn btn-secondary" type="button" onclick="openDetectorModal()">
+        <button class="btn btn-secondary" type="button" onclick="openDetectorModal()" data-tour="configure-detectors">
           <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 4.5H13M5.5 8H10.5M7 11.5H9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
@@ -1559,8 +1561,10 @@
         const reasons = getReasons(session);
         const anomaly = reasons.length > 0;
         const email = emailStatus(session);
+        const tourRow = session.id === 'sesn_01_xr924f' ? ' data-tour="session-anomaly-row"' : '';
+        const tourBadge = session.id === 'sesn_01_xr924f' ? ' data-tour="session-anomaly-badge"' : '';
         return `
-          <tr onclick="openTrace('${session.id}')">
+          <tr onclick="openTrace('${session.id}')"${tourRow}>
             <td>
               <div class="name-cell">
                 <span class="name-icon">
@@ -1581,7 +1585,7 @@
             <td><span class="metric ${metricClass(session, 'tokens')}">${formatTokens(session.tokens)}</span></td>
             <td><span class="metric ${metricClass(session, 'duration')}">${formatDuration(session.durationSeconds)}</span></td>
             <td>
-              <span class="anomaly-badge ${anomaly ? 'alert' : 'none'}">
+              <span class="anomaly-badge ${anomaly ? 'alert' : 'none'}"${tourBadge}>
                 ${anomaly ? 'Anomaly' : 'None'}
               </span>
             </td>
@@ -1601,7 +1605,7 @@
 
       root.innerHTML = `
         <div class="usage-table-wrap">
-          <table>
+          <table id="sessions-usage-table">
             <thead>
               <tr>
                 <th>Session</th>
@@ -1633,7 +1637,7 @@
       pageTitle.textContent = 'Session trace';
       pageSubtitle.textContent = `${session.shortId} - ${agent.name}`;
       headerActions.innerHTML = `
-        <button class="btn btn-secondary" type="button" onclick="openDetectorModal()">
+        <button class="btn btn-secondary" type="button" onclick="openDetectorModal()" data-tour="configure-detectors">
           <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 4.5H13M5.5 8H10.5M7 11.5H9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
@@ -1667,7 +1671,7 @@
               <span class="status-badge ${session.status}">${statusLabel(session.status)}</span>
             </div>
 
-            <div class="anomaly-banner ${anomaly ? 'visible' : ''}">
+            <div class="anomaly-banner ${anomaly ? 'visible' : ''}" data-tour="trace-anomaly-banner">
               <div class="banner-title">
                 <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 2L14 13H2L8 2Z" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/>
@@ -1719,7 +1723,7 @@
             </div>
           </section>
 
-          <aside class="email-panel">
+          <aside class="email-panel" data-tour="email-alert-panel">
             <div class="side-title">
               <span>Email alert</span>
               <span class="email-badge ${email.className}">${email.label}</span>
@@ -1918,6 +1922,7 @@
       setView('agents');
     }
   </script>
+  <script src="managed-agent-usage-tour.js"></script>
 </body>
 
 </html>
