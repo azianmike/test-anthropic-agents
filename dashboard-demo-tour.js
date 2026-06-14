@@ -9,7 +9,7 @@
     {
       targets: ['[data-tour="rate-limit-banner"]', '[data-tour="tier-section"]'],
       title: 'Start at the 429 moment',
-      body: 'Problem #1 starts when a scaling team is already blocked. The banner names the affected model, explains the current-tier throttle, and points them to the tier card so the credit threshold is clear.',
+      body: 'Problem #1 starts when a scaling team is already blocked. The banner names the affected model, explains the current-tier throttle, and points them to the tier card so the credit threshold is clear.<br><br><strong>Note:</strong> the banner, rate limit tiers, and Upgrade tier button ONLY SHOW when the user is currently running into a rate limit or has run into one in the last 10 minutes.',
       position: 'bottom',
       prepare: () => closeModal(),
     },
